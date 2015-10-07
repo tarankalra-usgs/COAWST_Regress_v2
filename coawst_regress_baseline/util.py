@@ -8,7 +8,7 @@ import os.path       # to copy files after checking if they exist on this path
 
 def get_coawst():
     """ get the coawst source code """
-    timestr = time.strftime("%m%d%Y")  
+    timestr = time.strftime("%Y%m%d")  
     srcdirname = "COAWST_src_"+timestr  
     code_path=os.path.abspath(srcdirname)
     try:
