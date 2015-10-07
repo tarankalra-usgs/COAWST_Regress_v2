@@ -5,8 +5,8 @@ import shutil
 import subprocess 
 import time
 
-def regress_sedfloc_toy(code_path):
-    case_name       ='Sedfloc_toy'
+def regress_sed_floc_toy(code_path):
+    case_name       ='Sed_floc_toy'
     base_bashfile   ='coawst.bash' 
     base_runfile    ='run_nemo'
     oceaninfile     ='ocean_%s.in' % (case_name.lower())

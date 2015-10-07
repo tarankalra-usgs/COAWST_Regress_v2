@@ -198,12 +198,24 @@ def move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,std
     outfile1=case_name+'.e'+stdout[:5]
     outfile2=case_name+'.o'+stdout[:5]
    
+#   Move the build folder first
+    src_dir='Build'
+    dst_dir=os.path.join(project_path,'Build')
+    try: 
+        shutil.copytree(src_dir,dst_dir)
+    except:
+        print"-------------------------------------"
+        print"Build folder for this case already exists"
+        print"-------------------------------------"
+     
+#   Now move output files
     outputfilelist= [outfile1,outfile2,bashfile,runfile,buildfile,execute,logfile]
 
     for filename in outputfilelist:
         if (os.path.isfile(filename)):
             shutil.move(filename,project_path)
 
+#   Now move all the files with these extensions or prefixes
     for filename in os.listdir('.'):
          if filename.endswith('.nc'):
              shutil.move(filename,project_path)
