@@ -27,7 +27,7 @@ def regress_sandy(code_path):
     buildfile       = 'Build.txt'
 
     os.chdir(project_path)
-    util.edit_wrfinfile('namelist.input',nprocx)
+    util.edit_wrfinfile('namelist.input',nprocx_atm,nprocy_atm)
     wrffiles=['namelist.input','wrfbdy_d01','wrfinput_d01','wrfinput_d02', \
               'wrflowinp_d01','wrflowinp_d02'] 
     for filename in wrffiles:
