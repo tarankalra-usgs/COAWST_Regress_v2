@@ -20,7 +20,7 @@ def regress_inlet(code_path):
     buildfile       = 'Build.txt'
 
     inlet_tests=os.listdir(os.path.join(code_path,'Projects/Inlet_test'))    
-    ignored = ['Coupled','DiffGrid','Refined','.svn']
+    ignored = ['.svn']
     inlet_tests= [x for x in inlet_tests if x not in ignored]
 
     print "----------------------------------------------"
