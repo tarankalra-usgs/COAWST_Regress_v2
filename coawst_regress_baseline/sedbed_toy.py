@@ -17,6 +17,7 @@ def regress_sedbed_toy(code_path):
     ntilex          = 1
     ntiley          = 1
     tot_nproc       = ntilex*ntiley
+    nodes           = 1   # for NEMO, ppn=8
     execute         = 'coawstM'
     logfile         = 'log.out_' + case_name
     buildfile       = 'Build.txt'
@@ -35,7 +36,8 @@ def regress_sedbed_toy(code_path):
     print "Compiling:", case_name,"case"
     os.system('./%(bashfile)s >>Build.txt' %locals() )
 
-    util.edit_jobscript(runfile,oceaninfile,case_name,project_str,code_path,tot_nproc)
+    util.edit_jobscript(runfile,oceaninfile,case_name,project_str,code_path,\
+                        tot_nproc,nodes)
 
     os.chdir(project_path)
     util.edit_oceaninfile(oceaninfile,ntilex,ntiley)
@@ -46,7 +48,11 @@ def regress_sedbed_toy(code_path):
     p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE) 
     stdout,stderr=p.communicate()
-    time.sleep(360) # stop for 10 mins
+
+#check every ten mins
+    stdout_case=stdout
+    util.check_queue(stdout_case)
 
 #   Moving output files to each projects folder
-    util.move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,stdout,logfile)
+    util.move_casefiles(project_path,case_name,bashfile,runfile,buildfile,\
+                        execute,stdout,logfile)

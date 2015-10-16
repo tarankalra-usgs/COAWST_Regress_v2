@@ -32,8 +32,10 @@ cases or have all of them included by commenting/uncommenting them in
 main.py. 
 
 3.The number of processors for each run can be changed inside each 
-project's file. Also the time of waiting after the execution of each 
-case is hardwired in the command "time.sleep()" and this time is in 
-seconds. So, as we increase the processors for a case we can decrease 
-the time required to run the job. 
+project's file. 
+
+4. Check_queue() is the function in util.py that 
+checks if each case is queued after ten minutes. There is a sleep time
+of 10 secs in the same function prior to that. If a case immediately goes
+out of the queue then we dont have waiting for 10 mins. 
 

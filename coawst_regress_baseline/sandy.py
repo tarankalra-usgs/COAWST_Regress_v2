@@ -22,6 +22,7 @@ def regress_sandy(code_path):
     nprocy_atm      = 1
     natm            = nprocx_atm*nprocy_atm
     tot_nproc       = nocn+nwav+natm 
+    nodes           = 1                    # for NEMO ppn=8
     execute         = 'coawstM'
     logfile         = 'log.out_' + case_name 
     buildfile       = 'Build.txt'
@@ -48,7 +49,8 @@ def regress_sandy(code_path):
     print "Compiling:", case_name,"case"
     os.system('./%(bashfile)s >>Build.txt' %locals() )
 
-    util.edit_jobscript(runfile,couplefile,case_name,project_str,code_path,tot_nproc)
+    util.edit_jobscript(runfile,couplefile,case_name,project_str,code_path,\
+                        tot_nproc,nodes)
 
     os.chdir(project_path)
     util.edit_oceaninfile(oceaninfile,ntilex,ntiley)
@@ -60,10 +62,14 @@ def regress_sandy(code_path):
     p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE) 
     stdout,stderr=p.communicate()
-    time.sleep(10800) # sleep for 3 hours in 8 proc case
+
+#check every ten mins
+    stdout_case=stdout
+    util.check_queue(stdout_case)
 
 #   Moving output files to each projects folder
-    util.move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,stdout,logfile)
+    util.move_casefiles(project_path,case_name,bashfile,runfile,buildfile,\
+                        execute,stdout,logfile)
 
 #   Remove WRF files from the code path 
     for filename in wrffiles:

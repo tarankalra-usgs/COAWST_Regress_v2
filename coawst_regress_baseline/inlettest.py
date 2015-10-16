@@ -16,11 +16,12 @@ def regress_inlet(code_path):
     nwav            = 4
     natm            = 0
     tot_nproc       = nocn+nwav+natm
+    nodes           = 1                 # for NEMO, ppn = 8 
     executable      = 'coawstM'
     buildfile       = 'Build.txt'
 
     inlet_tests=os.listdir(os.path.join(code_path,'Projects/Inlet_test'))    
-    ignored = ['.svn']
+    ignored = ['Coupled','DiffGrid','Swanonly','.svn']
     inlet_tests= [x for x in inlet_tests if x not in ignored]
 
     print "----------------------------------------------"
@@ -51,7 +52,8 @@ def regress_inlet(code_path):
             inputfile='coupling_inlet_test_diffgrid.in' 
 	    oceaninfile='ocean_inlet_test.in'
             couplefile=inputfile 
-            util.edit_jobscript(runfile,inputfile,case_subname,project_str,code_path,tot_nproc)    
+            util.edit_jobscript(runfile,inputfile,case_subname,project_str,\
+                                code_path,tot_nproc,nodes)    
 
             os.chdir(project_subpath)
             util.edit_couplefile(couplefile,natm,nwav,nocn,couple_flag)
@@ -61,46 +63,57 @@ def regress_inlet(code_path):
  
             print "------------------------------------------"
             print "Executing Inlet_test:", each_inlet_case 
-            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+            print "this is runfile",runfile 
+            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,    \
+                                stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()
-            time.sleep(3600)
            
+            #check every ten mins
+            stdout_case=stdout 
+            util.check_queue(stdout_case)
+          
             logfile = 'log.out_' + case_subname
 
             #   Moving output files to each projects folder
-            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,buildfile,executable,stdout,logfile)
+            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,\
+                                buildfile,executable,stdout,logfile)
 
         elif each_inlet_case == 'Coupled': 
             inputfile='coupling_inlet_test.in' 
             oceaninfile='ocean_inlet_test.in'
             couplefile=inputfile 
-            util.edit_jobscript(runfile,inputfile,case_subname,project_str,code_path,tot_nproc)    
+            util.edit_jobscript(runfile,inputfile,case_subname,project_str,\
+                                code_path,tot_nproc,nodes)    
           
             os.chdir(project_subpath)
             util.edit_couplefile(couplefile,natm,nwav,nocn,couple_flag)
             util.edit_oceaninfile(oceaninfile,ntilex,ntiley)
 
             os.chdir(code_path)
-  
 
             print "------------------------------------------"
             print "Executing Inlet_test:", each_inlet_case 
-            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+            print runfile,executable
+            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,     \
+                               stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()
-            time.sleep(3600)
+
+            #check every ten mins
+            stdout_case=stdout 
+            util.check_queue(stdout_case)
 
             logfile = 'log.out_' + case_subname
 
             #   Moving output files to each projects folder
-            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,buildfile,executable,stdout,logfile)
+            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,\
+                                buildfile,executable,stdout,logfile)
 
         elif each_inlet_case == 'Refined':
             inputfile='coupling_inlet_test_ref3.in' 
             oceaninfile='ocean_inlet_test_ref3.in'
             couplefile=inputfile 
-            util.edit_jobscript(runfile,inputfile,case_subname,project_str,code_path,tot_nproc)    
+            util.edit_jobscript(runfile,inputfile,case_subname,project_str,\
+                                code_path,tot_nproc,nodes)    
 
             os.chdir(project_subpath)
             util.edit_couplefile(couplefile,natm,nwav,nocn,couple_flag)
@@ -111,28 +124,37 @@ def regress_inlet(code_path):
 
             print "------------------------------------------"
             print "Executing Inlet_test:", each_inlet_case 
-            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,     \
+                               stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()
-            time.sleep(3600)
+
+            #check every ten mins
+            stdout_case=stdout 
+            util.check_queue(stdout_case)
 
             logfile = 'log.out_' + case_subname
 
             #   Moving output files to each projects folder
-            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,buildfile,executable,stdout,logfile)
+            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,\
+                                buildfile,executable,stdout,logfile)
 
         elif each_inlet_case == 'Swanonly': 
             inputfile='swan_inlet_test.in' 
-            util.edit_jobscript(runfile,inputfile,case_subname,project_str,code_path,tot_nproc)    
+            util.edit_jobscript(runfile,inputfile,case_subname,project_str,\
+                                code_path,tot_nproc,nodes)    
 
             print "------------------------------------------"
             print "Executing Inlet_test:", each_inlet_case 
-            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,      \
+                                stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()
-            time.sleep(3)
+
+            #check every ten mins
+            stdout_case=stdout 
+            util.check_queue(stdout_case)
 
             logfile = 'log.out_' + case_subname
 
             #   Moving output files to each projects folder
-            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,buildfile,executable,stdout,logfile)
+            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,\
+                                buildfile,executable,stdout,logfile)

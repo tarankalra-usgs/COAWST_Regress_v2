@@ -18,7 +18,8 @@ def regress_joetc(code_path):
     nprocx_atm      = 2
     nprocy_atm      = 2
     natm            = nprocx_atm*nprocy_atm
-    tot_nproc       = nocn+nwav+natm  
+    tot_nproc       = nocn+nwav+natm 
+    nodes           = 2                     # for NEMO, PPN=8 
     executable      = 'coawstM'
     buildfile       = 'Build.txt'
 
@@ -60,7 +61,8 @@ def regress_joetc(code_path):
             inputfile       ='coupling_joe_tc.in' 
             couplefile      = inputfile
             oceaninfile     = 'ocean_joe_tc.in' 
-            util.edit_jobscript(runfile,inputfile,case_subname,project_str,code_path,tot_nproc)    
+            util.edit_jobscript(runfile,inputfile,case_subname,project_str,\
+                                code_path,tot_nproc,nodes)    
 
             os.chdir(project_subpath)
             util.edit_couplefile(couplefile,natm,nwav,nocn,couple_flag)
@@ -70,19 +72,24 @@ def regress_joetc(code_path):
 
             print "------------------------------------------"
             print "Executing JOE TC test :", each_joetc_case 
-            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,    \
+                               stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()
-            time.sleep(32400) # sleep for 18 hours 
+
+            #check every ten mins
+            stdout_case=stdout
+            util.check_queue(stdout_case)
 
             #   Moving output files to each projects folder
-            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,buildfile,executable,stdout,logfile)
+            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,\
+                                buildfile,executable,stdout,logfile)
 
         elif each_joetc_case == 'DiffGrid': 
             inputfile       ='coupling_joe_tc.in' 
             couplefile      = inputfile
             oceaninfile     = 'ocean_joe_tc_coarse.in' 
-            util.edit_jobscript(runfile,inputfile,case_subname,project_str,code_path,tot_nproc)    
+            util.edit_jobscript(runfile,inputfile,case_subname,project_str,\
+                                code_path,tot_nproc,nodes)    
 
             os.chdir(project_subpath)
             util.edit_couplefile(couplefile,natm,nwav,nocn,couple_flag)
@@ -92,13 +99,17 @@ def regress_joetc(code_path):
 
             print "------------------------------------------"
             print "Executing JOE TC test :", each_joetc_case 
-            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+            p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,   \
+                                stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()
-            time.sleep(32400) # sleep for 9 hours 
+
+            #check every ten mins
+            stdout_case=stdout
+            util.check_queue(stdout_case)
 
             #   Moving output files to each projects folder
-            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,buildfile,executable,stdout,logfile)
+            util.move_casefiles(project_subpath,case_subname,bashfile,runfile,\
+                                buildfile,executable,stdout,logfile)
 
     #   Remove WRF files from the code path
     for filename in wrffiles:

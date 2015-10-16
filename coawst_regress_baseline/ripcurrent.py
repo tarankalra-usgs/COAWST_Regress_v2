@@ -21,6 +21,7 @@ def regress_ripcurrent(code_path):
     nwav            = 4                  # this is for SWAN
     natm            = 0                  # this is for wrf
     tot_nproc       = nocn+nwav+natm
+    nodes           = 1                  # for NEMO, PPN=8 
     executable      = 'coawstM'
     logfile         = 'log.out_' + case_name
     buildfile       = 'Build.txt'
@@ -39,7 +40,8 @@ def regress_ripcurrent(code_path):
     print "Compiling:", case_name,"case"
     os.system('./%(bashfile)s >>Build.txt' %locals() )
 
-    util.edit_jobscript(runfile,couplefile,case_name,project_str,code_path,tot_nproc)
+    util.edit_jobscript(runfile,couplefile,case_name,project_str,code_path,\
+                        tot_nproc,nodes)
 
     os.chdir(project_path)
     util.edit_couplefile(couplefile,natm,nwav,nocn,couple_flag)
@@ -51,7 +53,11 @@ def regress_ripcurrent(code_path):
     p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE) 
     stdout,stderr=p.communicate()
-    time.sleep(3600)  # sleep for 1 hour 
+
+#check every ten mins
+    stdout_case=stdout
+    util.check_queue(stdout_case)
 
 #   Moving output files to each projects folder
-    util.move_casefiles(project_path,case_name,bashfile,runfile,buildfile,executable,stdout,logfile)
+    util.move_casefiles(project_path,case_name,bashfile,runfile,buildfile,\
+                        executable,stdout,logfile)

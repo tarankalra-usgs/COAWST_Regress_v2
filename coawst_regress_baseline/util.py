@@ -5,10 +5,13 @@ import time          # internal module to get time
 import shutil        # file copying 
 import fileinput     # replacing string in files
 import os.path       # to copy files after checking if they exist on this path
+import subprocess    # for PBS commands
+import time          # to put test case on hold 
+import re            # regular expressions package for checking queue 
 
 def get_coawst():
     """ get the coawst source code """
-    timestr = time.strftime("%Y%m%d")  
+    timestr = time.strftime("%m%d%Y")  
     srcdirname = "COAWST_src_"+timestr  
     code_path=os.path.abspath(srcdirname)
     try:
@@ -82,7 +85,7 @@ def edit_bashfile(bashfile,each_case,code_path,project_path):
 
         sys.stdout.write(line)
 
-def edit_jobscript(runfile,inputfile,each_case,project_str,code_path,tot_nproc):
+def edit_jobscript(runfile,inputfile,each_case,project_str,code_path,tot_nproc,nodes):
     """edit the job script for each case  """ 
     for line in fileinput.input([runfile],inplace=True): 
         oldinput = "-N cwstv3"
@@ -95,6 +98,10 @@ def edit_jobscript(runfile,inputfile,each_case,project_str,code_path,tot_nproc):
 
         oldinput = "-o isabel_105.out"
         newinput = "-o " + each_case + ".out"
+        line = line.replace(oldinput,newinput)
+
+        oldinput="#PBS -l nodes=1:ppn=8,walltime=120:00:00"
+        newinput="#PBS -l nodes=%s:ppn=8,walltime=120:00:00" %(nodes)
         line = line.replace(oldinput,newinput)
 
         oldinput = "PBS -M jcwarner@usgs.gov"
@@ -165,20 +172,19 @@ def edit_couplefile(couplefile,natm,nwav,nocn,couple_flag):
 
             sys.stdout.write(line)
 
-def edit_ref_oceaninfile(inputfile,ntilex,ntiley,couple_flag):
+def edit_ref_oceaninfile(inputfile,ntilex,ntiley):
     """ edit the input file for each case """
     for line in fileinput.input([inputfile],inplace=True):
 
-        if couple_flag=='2way':
-            oldinput= "NtileI == 1 1"
-            newinput= "NtileI == %s %s"  %(ntilex)
-            line = line.replace(oldinput,newinput)
+        oldinput= "NtileI == 1 1"
+        newinput= "NtileI == %s %s"  %("ntilex","ntilex")
+        line = line.replace(oldinput,newinput)
 
-            oldinput= "NtileJ == 1 1"
-            newinput= "NtileJ == %s %s"  %(ntiley)
-            line = line.replace(oldinput,newinput)
+        oldinput= "NtileJ == 1 1"
+        newinput= "NtileJ == %s %s"  %("ntiley","ntiley")
+        line = line.replace(oldinput,newinput)
 
-            sys.stdout.write(line)
+        sys.stdout.write(line)
 
 def edit_wrfinfile(wrfinput,nprocx_atm,nprocy_atm):
     """ edit the input file for each case """
@@ -193,6 +199,26 @@ def edit_wrfinfile(wrfinput,nprocx_atm,nprocy_atm):
 
             sys.stdout.write(line)
 
+def check_queue(stdout_case):
+    time.sleep(10) # added a ten second pause just in case case goes out of the queue
+    while True:
+        p = subprocess.Popen("qstat",shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout=p.communicate()
+        flag=0  # initialize flag to zero value"
+        for line in stdout:
+             columns=line.split()
+             for piece in columns:
+                 get_jobid=re.findall(r"^[0-9]{5}",piece)
+                 str_get_jobid=("".join(get_jobid))  # convert the get_jobid to string
+                 if stdout_case[:5]==str_get_jobid:
+                     print "The test case that is queued/running"
+                     print "Check every 10 minutes"
+                     flag=1
+                     time.sleep(600) # ten minutes
+        if flag==0:
+            print "The last test case is out of the queue"
+            break
+
 def move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,stdout,logfile):
 #   Moving output files to each projects folder
     outfile1=case_name+'.e'+stdout[:5]
@@ -202,7 +228,7 @@ def move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,std
     src_dir='Build'
     dst_dir=os.path.join(project_path,'Build')
     try: 
-        shutil.copytree(src_dir,dst_dir)
+        shutil.move(src_dir,dst_dir)
     except:
         print"-------------------------------------"
         print"Build folder for this case already exists"
@@ -217,101 +243,16 @@ def move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,std
 
 #   Now move all the files with these extensions or prefixes
     for filename in os.listdir('.'):
-         if filename.endswith('.nc'):
-             shutil.move(filename,project_path)
+        if filename.endswith(('.nc','.mat')):
+            shutil.move(filename,project_path)
 
     for filename in os.listdir('.'):
-         if filename.endswith('.mat'):
-             shutil.move(filename,project_path)
+        if filename.startswith(('swaninit','wrfout','PRINT','Sandy_',\
+             'depth','force','qb','hsig','dissip','tmbot','rtp','ubot',\
+             'wdir','wlen','botlev','fric','vel','point1','watlev',\
+             'swan_inlet_rst','swan_inlet_ref1_rst','swan_intest_ref1_rst')):
+            shutil.move(filename,project_path)
     
-    for filename in os.listdir('.'):
-         if filename.startswith('swaninit'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('wrfout'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('PRINT'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('Sandy_'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('depth'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('force'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('qb'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('hsig'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('dissip'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('tmbot'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('rtp'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('vel'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('ubot'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('wdir'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('wlen'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('botlev'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('fric'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('vel'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('point1'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('watlev'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('swan_inlet_rst'):
-             shutil.move(filename,project_path)
-
-    for filename in os.listdir('.'):
-         if filename.startswith('swan_intest_ref1_rst'):
-             shutil.move(filename,project_path)
-
     outputfilelist2=['namelist.output','nodes.list']
     for filename in outputfilelist2:
         if (os.path.isfile(filename)):
