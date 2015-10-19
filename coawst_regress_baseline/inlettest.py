@@ -12,6 +12,8 @@ def regress_inlet(code_path):
     couple_flag     ='2way'
     ntilex          = 2
     ntiley          = 2
+    ntilex_ref      = "2  2"            #This is for "Refined" mesh 
+    ntiley_ref      = "2  2"            #This is for "Refined" mesh 
     nocn            = ntilex*ntiley
     nwav            = 4
     natm            = 0
@@ -21,7 +23,7 @@ def regress_inlet(code_path):
     buildfile       = 'Build.txt'
 
     inlet_tests=os.listdir(os.path.join(code_path,'Projects/Inlet_test'))    
-    ignored = ['Coupled','DiffGrid','Swanonly','.svn']
+    ignored = ['.svn']
     inlet_tests= [x for x in inlet_tests if x not in ignored]
 
     print "----------------------------------------------"
@@ -118,7 +120,7 @@ def regress_inlet(code_path):
             os.chdir(project_subpath)
             util.edit_couplefile(couplefile,natm,nwav,nocn,couple_flag)
 # For refined case the ocean file function is changed in the same script
-            util.edit_ref_oceaninfile(oceaninfile,ntilex,ntiley)
+            util.edit_ref_oceaninfile(oceaninfile,ntilex_ref,ntiley_ref)
 
             os.chdir(code_path)
 

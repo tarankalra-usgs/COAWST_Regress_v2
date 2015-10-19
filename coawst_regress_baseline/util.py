@@ -172,16 +172,16 @@ def edit_couplefile(couplefile,natm,nwav,nocn,couple_flag):
 
             sys.stdout.write(line)
 
-def edit_ref_oceaninfile(inputfile,ntilex,ntiley):
+def edit_ref_oceaninfile(inputfile,ntilex_ref,ntiley_ref):
     """ edit the input file for each case """
     for line in fileinput.input([inputfile],inplace=True):
 
         oldinput= "NtileI == 1 1"
-        newinput= "NtileI == %s %s"  %("ntilex","ntilex")
+        newinput= "NtileI == %s "  %(ntilex_ref)
         line = line.replace(oldinput,newinput)
 
         oldinput= "NtileJ == 1 1"
-        newinput= "NtileJ == %s %s"  %("ntiley","ntiley")
+        newinput= "NtileJ == %s"  %(ntiley_ref)
         line = line.replace(oldinput,newinput)
 
         sys.stdout.write(line)
