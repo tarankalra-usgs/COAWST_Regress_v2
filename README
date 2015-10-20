@@ -4,7 +4,12 @@ Regression test is in a folder called coawst_regress_nemo
 --------------------------------------------------------------------
 RUNNING THE REGRESSION MODULE 
 
-1. Execute by typing "python coawst_regress_run.py" 
+1. Execute by typing "nohup python coawst_regress_run.py" 
+
+2. The output would be in nohup.out 
+
+This nohup command would let the script run all the time even after
+SSH logs out of nemo
 
 --------------------------------------------------------------------
 DESCRIPTION OF THE PYTHON FILES
@@ -19,7 +24,7 @@ it has python files which are
 
 3. __init__.py --> It connects all the python files together 
                    to form this package. Any changes made to any 
-                   python file name should be modified in this file.
+                   python file name should be modified in this file
 --------------------------------------------------------------------
 
 NOTES 
