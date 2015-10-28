@@ -11,7 +11,7 @@ import re            # regular expressions package for checking queue
 
 def get_coawst():
     """ get the coawst source code """
-    timestr = time.strftime("%m%d%Y")  
+    timestr = time.strftime("%Y%m%d")  
     srcdirname = "COAWST_src_"+timestr  
     code_path=os.path.abspath(srcdirname)
     try:
@@ -250,6 +250,7 @@ def move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,std
         if filename.startswith(('swaninit','wrfout','PRINT','Sandy_',\
              'depth','force','qb','hsig','dissip','tmbot','rtp','ubot',\
              'wdir','wlen','botlev','fric','vel','point1','watlev',\
+             'wind','setup.mat',                                   \
              'swan_inlet_rst','swan_inlet_ref1_rst','swan_intest_ref1_rst')):
             shutil.move(filename,project_path)
     
