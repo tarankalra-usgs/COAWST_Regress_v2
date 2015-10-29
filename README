@@ -4,7 +4,7 @@ Regression test is in a folder called coawst_regress_nemo
 --------------------------------------------------------------------
 RUNNING THE REGRESSION MODULE 
 
-1. Execute by typing "nohup python coawst_regress_run.py" 
+1. Execute by typing "nohup python run_coawst_regress.py" 
 
 2. The output would be in nohup.out 
 
