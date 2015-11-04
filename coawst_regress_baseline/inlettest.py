@@ -44,7 +44,7 @@ def regress_inlet(code_path):
         """ Edit 'coawst.bash' for each case """
         util.edit_bashfile(bashfile,case_name,code_path,project_subpath)     
 
-        os.system('./%(bashfile)s >>Build.txt' %locals() )
+        os.system('./%(bashfile)s  >>Build.txt 2>&1' %locals() )
         print "------------------------------------------"
         print "Finished compiling Inlet test:", each_inlet_case
        
@@ -65,7 +65,6 @@ def regress_inlet(code_path):
  
             print "------------------------------------------"
             print "Executing Inlet_test:", each_inlet_case 
-            print "this is runfile",runfile 
             p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,    \
                                 stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()
@@ -95,7 +94,6 @@ def regress_inlet(code_path):
 
             print "------------------------------------------"
             print "Executing Inlet_test:", each_inlet_case 
-            print runfile,executable
             p=subprocess.Popen("qsub %(runfile)s" %locals(),shell=True,     \
                                stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr=p.communicate()

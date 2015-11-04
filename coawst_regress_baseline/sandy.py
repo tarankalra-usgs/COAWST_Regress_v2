@@ -46,8 +46,23 @@ def regress_sandy(code_path):
     util.edit_bashfile(bashfile,case_name,code_path,project_path)
  
     print "------------------------------------------"
+    print " Make clean WRF:", case_name, "case"
+    """ enter the WRF folder """
+    WRF_path=os.path.join(code_path,'WRF')
+    os.chdir(WRF_path)
+    os.system('./clean -a  >>Build.txt 2>&1') 
+
+    """ Change back to code_path """
+    os.chdir(code_path)
+
+    """ copy the configure file in WRF folder """ 
+    src_wrf_conf = os.path.abspath('../coawst_regress_baseline/WRF_config_file/configure.wrf')
+    dest2=os.path.join(code_path,'WRF')
+    shutil.copy(src_wrf_conf,dest2)
+
+    print "------------------------------------------"
     print "Compiling:", case_name,"case"
-    os.system('./%(bashfile)s >>Build.txt' %locals() )
+    os.system('./%(bashfile)s  >>Build.txt 2>&1' %locals() )
 
     util.edit_jobscript(runfile,couplefile,case_name,project_str,code_path,\
                         tot_nproc,nodes)

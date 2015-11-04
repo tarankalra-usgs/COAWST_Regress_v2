@@ -38,7 +38,7 @@ def regress_ripcurrent(code_path):
 
     print "------------------------------------------"
     print "Compiling:", case_name,"case"
-    os.system('./%(bashfile)s >>Build.txt' %locals() )
+    os.system('./%(bashfile)s  >>Build.txt 2>&1' %locals() )
 
     util.edit_jobscript(runfile,couplefile,case_name,project_str,code_path,\
                         tot_nproc,nodes)

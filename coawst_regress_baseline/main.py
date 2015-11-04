@@ -28,7 +28,7 @@ def setup_testcase():
     speclight.regress_speclight(code_path) 
     sedbed_toy.regress_sedbed_toy(code_path) 
     sed_floc_toy.regress_sed_floc_toy(code_path) 
-    sandy.regress_sandy(code_path) 
     ripcurrent.regress_ripcurrent(code_path) 
     inlettest.regress_inlet(code_path) 
     joetc.regress_joetc(code_path) 
+    sandy.regress_sandy(code_path) 

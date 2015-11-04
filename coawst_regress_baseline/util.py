@@ -20,11 +20,7 @@ def get_coawst():
         os.system('svn checkout https://coawstmodel.sourcerepo.com/coawstmodel/COAWST .' %locals())
 
         src_wrf_make = os.path.abspath('../coawst_regress_baseline/WRF_config_file/makefile')
-        src_wrf_conf = os.path.abspath('../coawst_regress_baseline/WRF_config_file/configure.wrf')
-        dest2 = os.path.join(code_path, 'WRF')
         shutil.copy(src_wrf_make,code_path)
-        shutil.copy(src_wrf_conf,dest2)
-
         return code_path
 
     except Exception, OSError:
@@ -248,10 +244,10 @@ def move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,std
 
     for filename in os.listdir('.'):
         if filename.startswith(('swaninit','wrfout','PRINT','Sandy_',\
-             'depth','force','qb','hsig','dissip','tmbot','rtp','ubot',\
-             'wdir','wlen','botlev','fric','vel','point1','watlev',\
-             'wind','setup.mat',                                   \
-             'swan_inlet_rst','swan_inlet_ref1_rst','swan_intest_ref1_rst')):
+            'depth','force','qb','hsig','dissip','tmbot','rtp','ubot',\
+            'wdir','wlen','botlev','fric','vel','point1','watlev',\
+            'wind','setup.mat','joe_tc_init2.hot',                \
+            'swan_inlet_rst','swan_inlet_ref1_rst','swan_intest_ref1_rst')):
             shutil.move(filename,project_path)
     
     outputfilelist2=['namelist.output','nodes.list']
