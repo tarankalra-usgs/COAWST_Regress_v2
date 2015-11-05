@@ -50,7 +50,7 @@ def regress_sandy(code_path):
     """ enter the WRF folder """
     WRF_path=os.path.join(code_path,'WRF')
     os.chdir(WRF_path)
-    os.system('./clean -a  >>Build.txt 2>&1') 
+    os.system('./clean -a  >>WRF_clean.txt 2>&1') 
 
     """ Change back to code_path """
     os.chdir(code_path)
