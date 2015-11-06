@@ -21,6 +21,7 @@ def get_coawst():
 
         src_wrf_make = os.path.abspath('../coawst_regress_baseline/WRF_config_file/makefile')
         shutil.copy(src_wrf_make,code_path)
+
         return code_path
 
     except Exception, OSError:
@@ -113,7 +114,11 @@ def edit_jobscript(runfile,inputfile,each_case,project_str,code_path,tot_nproc,n
         line = line.replace(oldinput,newinput)
 
         oldinput = "Projects/Sandy/coupling_sandy1.in"
-        newinput =  project_str + '/'+ inputfile
+        newinput =  project_str+'/'+inputfile
+        """ for swanonly need two input files """
+        newinput2 = ' '+project_str+'/'+'swan_inlet_test_ref5.in'
+        if each_case=="Inlet_test_Swanonly":
+            newinput=newinput+newinput2 
         line = line.replace(oldinput,newinput)
 
         oldinput = "cwstv3.out"
@@ -246,8 +251,8 @@ def move_casefiles(project_path,case_name,bashfile,runfile,buildfile,execute,std
         if filename.startswith(('swaninit','wrfout','PRINT','Sandy_',\
             'depth','force','qb','hsig','dissip','tmbot','rtp','ubot',\
             'wdir','wlen','botlev','fric','vel','point1','watlev',\
-            'wind','setup.mat','joe_tc_init2.hot',                \
-            'swan_inlet_rst','swan_inlet_ref1_rst','swan_intest_ref1_rst')):
+            'wind','setup.mat','joe_tc_init2.hot','swangrid','xp','yp',\
+            'swan_inlet_','swan_intest_')):
             shutil.move(filename,project_path)
     
     outputfilelist2=['namelist.output','nodes.list']
