@@ -1,6 +1,8 @@
 from . import util 
 from . import main
 from . import trench 
+from . import estuary_test2
+from . import wetdry
 from . import ducknc 
 from . import speclight
 from . import sedbed_toy
@@ -9,3 +11,4 @@ from . import sandy
 from . import ripcurrent
 from . import inlettest
 from . import joetc 
+from . import shoreface

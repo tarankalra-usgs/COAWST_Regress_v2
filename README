@@ -4,7 +4,7 @@ Regression test is in a folder called coawst_regress_nemo
 --------------------------------------------------------------------
 RUNNING THE REGRESSION MODULE 
 
-1. Execute by typing "nohup python run_coawst_regress.py" 
+1. Execute by typing "nohup python run_coawst_regress.py &" 
 
 2. The output would be in nohup.out 
 
@@ -43,4 +43,18 @@ project's file.
 checks if each case is queued after ten minutes. There is a sleep time
 of 10 secs in the same function prior to that. If a case immediately goes
 out of the queue then we dont have waiting for 10 mins. 
+
+5. Cases under regression test
+trench
+estuary_test2
+wetdry
+ducknc
+speclight
+sedbed_toy
+sed_floc_toy
+ripcurrent
+inlettest
+joetc
+sandy
+shoreface
 
