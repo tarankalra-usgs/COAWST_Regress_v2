@@ -6,6 +6,7 @@ import subprocess
 
 def regress_wetdry(code_path):
     case_name       ='wetdry'
+    include_name    ='wetdry_dam_break'
     base_bashfile   ='coawst.bash' 
     base_runfile    ='run_nemo'
     oceaninfile     ='ocean_wetdry_dam_break.in'
@@ -29,7 +30,7 @@ def regress_wetdry(code_path):
     runfile   = base_runfile + "_" + case_name
     shutil.copy2(base_runfile,runfile)
  
-    util.edit_bashfile(bashfile,case_name,code_path,project_path)
+    util.edit_bashfile(bashfile,include_name,code_path,project_path)
  
     print "------------------------------------------"
     print "Compiling:", case_name,"case"
