@@ -12,3 +12,20 @@ from . import ripcurrent
 from . import inlettest
 from . import joetc 
 from . import shoreface
+#
+from . import util_plot
+from . import main_plot
+from . import trench_plot
+from . import upwelling_plot
+#from . import estuary_test2_plot
+#from . import wetdry_plot
+#from . import ducknc_plot
+#from . import speclight_plot
+#from . import sedbed_toy_plot
+#from . import sed_floc_toy_plot
+#from . import sandy_plot 
+#from . import ripcurrent_plot
+#from . import inlettest_plot
+#from . import joetc_plot 
+#from . import shoreface_plot
+
