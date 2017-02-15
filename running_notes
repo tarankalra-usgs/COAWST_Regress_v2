@@ -1,0 +1,5 @@
+     For peach regress 
+     oldinput="#export              FORT=pgi"
+        newinput=" export              FORT=pgi"
+        line = line.replace(oldinput,newinput)
+
